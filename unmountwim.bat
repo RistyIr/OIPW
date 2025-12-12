@@ -1,1 +1,2 @@
-DISM /Unmount-Wim /MountDir:PATH\Deploiement\mount /Discard
+DISM /Unmount-Wim /MountDir:E:\Deploiement\mount /Discard
+dism /Cleanup-Wim

@@ -5,7 +5,7 @@ setlocal EnableDelayedExpansion
 :: -----------------------------------------------------------
 :: Configuration des chemins de base
 :: -----------------------------------------------------------
-set "BASE=PATH\Deploiement"
+set "BASE=E:\Deploiement"
 set "WIMFILE=%BASE%\wim\install.wim"
 set "MOUNTDIR=%BASE%\mount"
 set "BOOTWIM=%BASE%\boot\boot.wim"
@@ -51,6 +51,20 @@ if not exist "%MOUNTDIR%\Windows" (
 
 echo [INFO] Montage de install.wim réussi.
 
+:: === Personnalisation Finger Tech dans propriétés système ===
+:: Monter la ruche SOFTWARE du Windows offline
+
+REG LOAD HKLM\TempSoft "%~dp0mount\Windows\System32\Config\SOFTWARE"
+
+:: Ajouter ou modifier les valeurs d'intégrateur dans les propriétés système
+REG ADD "HKLM\TempSoft\Microsoft\Windows\CurrentVersion\OEMInformation" /v "Manufacturer" /t REG_SZ /d "Personnalisé par Finger Tech" /f
+REG ADD "HKLM\TempSoft\Microsoft\Windows\CurrentVersion\OEMInformation" /v "SupportPhone" /t REG_SZ /d "+261 34 87 394 41" /f
+REG ADD "HKLM\TempSoft\Microsoft\Windows\CurrentVersion\OEMInformation" /v "SupportURL" /t REG_SZ /d "https://wa.me/261348739441" /f
+
+:: Démonter la ruche après modification
+REG UNLOAD HKLM\TempSoft
+
+
 goto MENU
 
 :: -----------------------------------------------------------
@@ -87,7 +101,7 @@ cls
 echo.
 echo ==================================================
 echo  Sélectionnez le type de mises à jour à intégrer
-echo    1. Windows 11 24H2  (Deploiement\updates)
+echo    1. Windows 11 25H2  (Deploiement\updates)
 echo    2. Windows 11 23H2  (Deploiement\updatele)
 echo    3. Windows 10       (Deploiement\updateten)
 echo    4. Retour au menu principal
@@ -95,7 +109,7 @@ echo ==================================================
 set /p updateChoice="Votre choix (1-4) : "
 if "%updateChoice%"=="1" (
     set "UPDATES=%BASE%\updates"
-    set "VERSION_UPDATE=Windows 11 24H2"
+    set "VERSION_UPDATE=Windows 11 25H2"
 ) else if "%updateChoice%"=="2" (
     set "UPDATES=%BASE%\updatele"
     set "VERSION_UPDATE=Windows 11 23H2"
@@ -152,7 +166,6 @@ if exist "%BASE%\drivers\bootInsert" (
 ) else (
     echo [INFO] Aucun pilote à injecter dans boot.wim ^(dossier %BASE%\drivers\bootInsert introuvable^)
 )
-
 
 :: Injection dans install.wim
 if exist "%BASE%\drivers\finalInsert" (
@@ -233,7 +246,6 @@ copy /Y "%MOUNTDIR%\Windows\Setup\Scripts\set_wallpaper.bat" "%MOUNTDIR%\Program
 
 echo [INFO] Fond d'écran personnalisé appliqué
 goto MENU
-
 
 :: -----------------------------------------------------------
 :: Finalisation et Exportation

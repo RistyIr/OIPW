@@ -1,1 +1,1 @@
-DISM /Unmount-Wim /MountDir:PATH\Deploiement\bootmount /Discard
+DISM /Unmount-Wim /MountDir:E:\Deploiement\bootmount /Discard
